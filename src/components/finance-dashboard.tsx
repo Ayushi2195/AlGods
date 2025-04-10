@@ -48,14 +48,23 @@ export function FinanceDashboard() {
 
   // Sample data for Savings Growth chart
   const savingsGrowthData = [
-    { month: "Jan", savings: 1500 },
-    { month: "Feb", savings: 1700 },
-    { month: "Mar", savings: 2205 },
+    { month: "Apr", savings: 2100 },
+    { month: "May", savings: 1800 },
+    { month: "Jun", savings: 2500 },
+    { month: "Jul", savings: 1500 },
+    { month: "Aug", savings: 3200 },
+    { month: "Sep", savings: 2300 },
+    { month: "Oct", savings: 1900 },
+    { month: "Nov", savings: 2800 },
+    { month: "Dec", savings: 1700 },
+    { month: "Jan", savings: 2600 },
+    { month: "Feb", savings: 2000 },
+    { month: "Mar", savings: 2900 },
   ]
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-      <Card className="lg:col-span-4">
+    <div className="grid grid-cols-2 gap-4">
+      <Card>
         <CardHeader>
           <CardTitle>Income vs. Expenses</CardTitle>
           <CardDescription>Monthly comparison for the past year</CardDescription>
@@ -63,34 +72,24 @@ export function FinanceDashboard() {
         <CardContent className="pl-2">
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={incomeExpensesData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+              <LineChart data={incomeExpensesData} margin={{ top: 20, right: 20, left: 0, bottom: 40 }}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                <XAxis dataKey="month" />
+                <XAxis dataKey="month" angle={-90} textAnchor="end" interval={0} height={60} tickLine={false} axisLine={false} />
                 <YAxis />
-                <Tooltip />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
+                  formatter={(value) => [`$${value}`, value === incomeExpensesData[0].income ? "Income" : "Expenses"]}
+                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                />
                 <Legend />
-                <Line
-                  type="monotone"
-                  dataKey="income"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="expenses"
-                  stroke="hsl(var(--secondary))"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                  activeDot={{ r: 6 }}
-                />
+                <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} dot={false} />
+                <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
-      <Card className="lg:col-span-3">
+      <Card>
         <CardHeader>
           <CardTitle>Expense Breakdown</CardTitle>
           <CardDescription>By category for current month</CardDescription>
@@ -120,7 +119,7 @@ export function FinanceDashboard() {
           </div>
         </CardContent>
       </Card>
-      <Card className="lg:col-span-3">
+      <Card>
         <CardHeader>
           <CardTitle>Savings Growth</CardTitle>
           <CardDescription>Year-to-date progress</CardDescription>
@@ -128,18 +127,31 @@ export function FinanceDashboard() {
         <CardContent className="pl-2">
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={savingsGrowthData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+              <BarChart data={savingsGrowthData} margin={{ top: 20, right: 20, left: 0, bottom: 50 }}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                <XAxis dataKey="month" />
+                <XAxis
+                  dataKey="month"
+                  interval={0}
+                  angle={-90}
+                  textAnchor="end"
+                  height={60}
+                  padding={{ left: 20, right: 20 }}
+                  tickLine={false}
+                  axisLine={false}
+                />
                 <YAxis />
-                <Tooltip />
-                <Bar dataKey="savings" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
+                  formatter={(value) => [`$${value}`, "Savings"]}
+                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                />
+                <Bar dataKey="savings" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={18} maxBarSize={18} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
-      <Card className="lg:col-span-4">
+      <Card>
         <CardHeader>
           <CardTitle>Recent Transactions</CardTitle>
           <CardDescription>Last 5 transactions</CardDescription>
@@ -202,3 +214,4 @@ export function FinanceDashboard() {
     </div>
   )
 }
+
