@@ -1,0 +1,1 @@
+This is a fullStack finance management app. One step solution for you Finance
