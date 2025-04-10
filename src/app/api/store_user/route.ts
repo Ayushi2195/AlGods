@@ -6,11 +6,16 @@ const prisma = new PrismaClient();
 
 interface UserData {
     fullname: string;
-    lastName: string;
+    lastName?: string;
     username: string;
     role: string;
     mobile_number: string;
     country: string;
+    bank_accounts: string[];
+    profile_info?: {
+        age: string;
+        gender: string;
+    };
 }
 
 export async function POST(request: NextRequest) {
@@ -31,9 +36,9 @@ export async function POST(request: NextRequest) {
         }
 
         const body: UserData = await request.json();
-        const { fullname, username, role, mobile_number, country } = body;
+        const { fullname, username, role, mobile_number, country, bank_accounts } = body;
 
-        if (!fullname || !username || !role || !mobile_number || !country) {
+        if (!fullname || !username || !role || !mobile_number || !country || !bank_accounts) {
             return NextResponse.json({ error: "All fields are required" }, { status: 400 });
         }
 
@@ -45,11 +50,11 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: "Username already exists" }, { status: 400 });
         }
 
+        // Create user with the provided data
         const newUser = await prisma.user.create({
             data: {
                 email,
                 fullname,
-
                 username,
                 role,
                 mobile_number,
@@ -57,6 +62,7 @@ export async function POST(request: NextRequest) {
                 isAdmin: role !== "Student",
                 country,
                 signUpCompleted: true,
+                bank_accounts: bank_accounts || [], // This now contains the profile info as JSON
             },
         });
 
@@ -69,8 +75,9 @@ export async function POST(request: NextRequest) {
             { status: 200 }
         );
     } catch (error: any) {
+        console.error("Error creating user:", error);
         return NextResponse.json(
-            { error: `Error occurred: ${error.message}` },
+            { error: error.message || "Internal server error" },
             { status: 500 }
         );
     }

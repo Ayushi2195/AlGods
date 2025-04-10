@@ -38,7 +38,9 @@ export default function Home() {
           option ? <div className="p-4">
             <UserButton />
           </div> :
-            <Button size="sm">Sign In</Button>
+            <Link href="/sign-in">
+              <Button size="sm">Sign In</Button>
+            </Link>
         }
       </header>
       <main className="flex-1">
@@ -155,7 +157,7 @@ export default function Home() {
         </section>
       </main>
       <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full border-t px-4 md:px-6">
-        <p className="text-xs text-muted-foreground">© 2025 FinanceWise. All rights reserved.</p>
+        <p className="text-xs text-muted-foreground"> 2025 FinanceWise. All rights reserved.</p>
         <nav className="sm:ml-auto flex gap-4 sm:gap-6">
           <Link href="#" className="text-xs hover:underline underline-offset-4">
             Terms of Service
