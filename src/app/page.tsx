@@ -1,16 +1,27 @@
+"use client"
 import Link from "next/link"
 import { ArrowRight, ArrowUpRight, DollarSign, LineChart, PiggyBank, TrendingUp } from "lucide-react"
-
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-
+import { useUser } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
 export default function Home() {
+  const { user, isLoaded, isSignedIn } = useUser();
+  const [option, setOption] = useState(isSignedIn)
+
+  useEffect(() => {
+    if (isLoaded) {
+
+      setOption(isSignedIn); // update when loaded
+    }
+  }, [isSignedIn, isLoaded]);
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <DollarSign className="h-6 w-6 text-primary" />
-          <span>finFlow</span>
+          <span>FinFlow</span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <Link href="/dashboard" className="text-sm font-medium hover:underline underline-offset-4">
@@ -23,7 +34,12 @@ export default function Home() {
             Advice
           </Link>
         </nav>
-        <Button size="sm">Sign In</Button>
+        {
+          option ? <div className="p-4">
+            <UserButton />
+          </div> :
+            <Button size="sm">Sign In</Button>
+        }
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">

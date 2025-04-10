@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username             String               @unique
+  fullname             String
+  email                String               @unique
+  password             String
+  mobile_number        String
+  country              String
+  bank_accounts        String[]
+  financialProfile     FinancialProfile?
+  transactionHistories TransactionHistory[]
+  canIBuyHistories     CanIBuyHistory[]
+  OtherDebt            OtherDebt[]
+  Loan                 Loan[]
+  Emi                  Emi[]
+}
+
+model FinancialProfile {
+  id                            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  monthly_income                Float
+  average_expenditure_per_month Float
+  gold_loans                    String[]
+  otherDebts                    OtherDebt[]
+  user_id                       String      @unique @db.Uuid
+  user                          User        @relation(fields: [user_id], references: [id])
+  loan                          Loan[]
+  emi                           Emi[]
+}
+
+model OtherDebt {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id             String           @db.Uuid
+  user                User             @relation(fields: [user_id], references: [id])
+  LenderName          String
+  lender_phoneNumaber String
+  lender_location     String
+  collateral          String[]
+  asset_type          String
+  quantity            String
+  asset_value         Float
+  SupportingFiles     String[]
+  financialProfileId  String           @db.Uuid
+  financialProfile    FinancialProfile @relation(fields: [financialProfileId], references: [id])
+}
+
+enum EmiStatus {
+  Pending
+  Paid
+  Missed
+  Late
+}
+
+model Loan {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id            String            @db.Uuid
+  user               User              @relation(fields: [user_id], references: [id])
+  amount             Float
+  interest_rate      Float
+  tenure_months      Int
+  start_date         DateTime
+  end_date           DateTime
+  loan_type          String
+  organization       String
+  status             String            @default("Active")
+  emi                Emi[]
+  remarks            String?
+  supporting_docs    String[]
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  FinancialProfile   FinancialProfile? @relation(fields: [financialProfileId], references: [id])
+  financialProfileId String?           @db.Uuid
+}
+
+model Emi {
+  id                 String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  amount             Float
+  due_date           DateTime
+  paid_date          DateTime?
+  status             EmiStatus         @default(Pending)
+  loan_id            String            @db.Uuid
+  loan               Loan              @relation(fields: [loan_id], references: [id])
+  user_id            String            @db.Uuid
+  user               User              @relation(fields: [user_id], references: [id])
+  penalty_amount     Float?
+  notes              String?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  FinancialProfile   FinancialProfile? @relation(fields: [financialProfileId], references: [id])
+  financialProfileId String?           @db.Uuid
+}
+
+model TransactionHistory {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id        String   @db.Uuid
+  user           User     @relation(fields: [user_id], references: [id])
+  amount_spent   Int
+  category       String
+  sub_category   String
+  description    String
+  date           DateTime
+  vendor         String
+  payment_mode   String
+  necessity_rate Float
+  risk           Float
+}
+
+model CanIBuyHistory {
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_id  String   @db.Uuid
+  amount   Float
+  category String
+  date     DateTime
+  result   String
+
+  user User @relation(fields: [user_id], references: [id])
+}
