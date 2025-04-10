@@ -123,7 +123,7 @@ export default function Home() {
                   </p>
                 </CardContent>
                 <CardFooter>
-                  <Link href="/trends">
+                  <Link href="/dashboard">
                     <Button variant="ghost" size="sm" className="gap-1">
                       Learn more
                       <ArrowRight className="h-4 w-4" />
@@ -142,7 +142,7 @@ export default function Home() {
                   </p>
                 </CardContent>
                 <CardFooter>
-                  <Link href="/investments">
+                  <Link href="/dashboard">
                     <Button variant="ghost" size="sm" className="gap-1">
                       Learn more
                       <ArrowRight className="h-4 w-4" />
