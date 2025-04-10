@@ -15,7 +15,7 @@ import {
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "FinanceWise - Your Financial Dashboard",
+  title: "FinFlow - Your Financial Dashboard",
   description: "Track your income, manage expenses, and get personalized investment advice all in one place.",
   generator: "v0.dev",
 }

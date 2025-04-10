@@ -17,7 +17,7 @@ export default function AdvicePage() {
     {
       role: "system",
       content:
-        "Welcome to FinanceWise! Ask me any questions about personal finance, investments, or financial planning.",
+        "Welcome to FinFlow! Ask me any questions about personal finance, investments, or financial planning.",
     },
   ])
 
@@ -72,7 +72,7 @@ export default function AdvicePage() {
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-6">
           <Link href="/" className="lg:hidden">
             <DollarSign className="h-6 w-6" />
-            <span className="sr-only">FinanceWise</span>
+            <span className="sr-only">FinFlow</span>
           </Link>
           <div className="w-full flex-1">
             <h1 className="text-lg font-semibold">Financial Advice</h1>
