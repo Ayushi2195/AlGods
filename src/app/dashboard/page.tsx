@@ -470,6 +470,7 @@ export default function DashboardPage() {
           </Tabs>
         </main>
       </div>
+
     </div>
   )
 }
