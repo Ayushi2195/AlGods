@@ -10,7 +10,7 @@ export default function Home() {
       <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <DollarSign className="h-6 w-6 text-primary" />
-          <span>FinanceWise</span>
+          <span>FinFlow</span>
         </Link>
         <nav className="ml-auto flex gap-4 sm:gap-6">
           <Link href="/dashboard" className="text-sm font-medium hover:underline underline-offset-4">
