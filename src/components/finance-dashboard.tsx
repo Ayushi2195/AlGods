@@ -72,18 +72,28 @@ export function FinanceDashboard() {
         <CardContent className="pl-2">
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={incomeExpensesData} margin={{ top: 20, right: 20, left: 0, bottom: 40 }}>
+              <LineChart data={incomeExpensesData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                <XAxis dataKey="month" angle={-90} textAnchor="end" interval={0} height={60} tickLine={false} axisLine={false} />
+                <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip 
-                  contentStyle={{ backgroundColor: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }}
-                  formatter={(value) => [`$${value}`, value === incomeExpensesData[0].income ? "Income" : "Expenses"]}
-                  labelStyle={{ color: "hsl(var(--foreground))" }}
-                />
+                <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="income" stroke="#10b981" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="expenses" stroke="#ef4444" strokeWidth={2} dot={false} />
+                <Line
+                  type="monotone"
+                  dataKey="income"
+                  stroke="hsl(var(--primary))"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="expenses"
+                  stroke="hsl(var(--secondary))"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -131,7 +141,7 @@ export function FinanceDashboard() {
                 <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
                 <XAxis
                   dataKey="month"
-                  interval={0}
+                  interval={0}  
                   angle={-90}
                   textAnchor="end"
                   height={60}
