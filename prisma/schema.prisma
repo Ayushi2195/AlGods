@@ -17,6 +17,7 @@ model User {
   age                  String
   gender               String
   bank_accounts        String[]
+  loans                String[]             @default([])
   financialProfile     FinancialProfile?
   transactionHistories TransactionHistory[]
   canIBuyHistories     CanIBuyHistory[]

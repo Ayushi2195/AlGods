@@ -12,6 +12,7 @@ interface UserData {
     mobile_number: string;
     country: string;
     bank_accounts: string[];
+    loans?: string[];
     profile_info?: {
         age: string;
         gender: string;
@@ -36,9 +37,10 @@ export async function POST(request: NextRequest) {
         }
 
         const body: UserData = await request.json();
-        const { fullname, username, role, mobile_number, country, bank_accounts } = body;
+        const { fullname, username, mobile_number, country, bank_accounts } = body;
+        const role = body.role || "User"; // Set default role if not provided
 
-        if (!fullname || !username || !role || !mobile_number || !country || !bank_accounts) {
+        if (!fullname || !username || !mobile_number || !country || !bank_accounts) {
             return NextResponse.json({ error: "All fields are required" }, { status: 400 });
         }
 
@@ -63,6 +65,7 @@ export async function POST(request: NextRequest) {
                 country,
                 signUpCompleted: true,
                 bank_accounts: bank_accounts || [], // This now contains the profile info as JSON
+                loans: body.loans || [], // Add loans data if provided
             },
         });
 
