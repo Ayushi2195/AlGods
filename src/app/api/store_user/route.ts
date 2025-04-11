@@ -15,26 +15,33 @@ interface UserData {
 
 export async function POST(request: NextRequest) {
     try {
+        console.log("we are here")
+
         const { userId } = await auth();
         if (!userId) {
             throw new Error("Not authenticated");
         }
 
         const clerkUser = await currentUser();
-        const email = clerkUser?.emailAddresses[0]?.emailAddress;
+        if (!clerkUser) {
+            return NextResponse.json({ error: "Clerk user not found" }, { status: 400 });
+        }
 
+        console.log("Clerk user object:", clerkUser);
+
+        const email = clerkUser?.emailAddresses?.[0]?.emailAddress;
         if (!email) {
-            return NextResponse.json({ error: "Email not found" }, { status: 400 });
+            return NextResponse.json({ error: "Email not found in Clerk user object" }, { status: 400 });
         }
 
         const body: UserData = await request.json();
         const { fullname, username, mobile_number, country, bank_accounts } = body;
-        const role = body.role || "User"; // Set default role if not provided
+
 
         if (
             !fullname ||
             !username ||
-            !role ||
+
             !mobile_number ||
             !country ||
             !Array.isArray(bank_accounts)
@@ -62,13 +69,11 @@ export async function POST(request: NextRequest) {
                 email,
                 fullname,
                 username,
-                role,
                 mobile_number,
-                clerkId: userId,
-                isAdmin: role !== "Student",
+
                 country,
                 bank_accounts,
-                signUpCompleted: true,
+
 
             },
         });

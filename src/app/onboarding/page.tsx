@@ -36,18 +36,22 @@ interface Loan {
 }
 
 export default function OnboardingPage() {
+  const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
   const router = useRouter();
   const { user, isLoaded, isSignedIn } = useUser();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1); // Track which page of the form we're on
-  
+
   const [formData, setFormData] = useState({
     fullname: "",
     username: "",
     mobile_number: "",
     country: "",
     bankAccounts: [{ accountNumber: "" }] as BankAccount[],
-    loans: [{
+  });
+
+  const [loans, setLoans] = useState<Loan[]>([
+    {
       amount: "",
       interestRate: "",
       duration: "",
@@ -59,10 +63,8 @@ export default function OnboardingPage() {
       collateral: "",
       assetType: "",
       assetValue: ""
-    }] as Loan[],
-    role: "User"
-  });
-
+    }
+  ]);
   // Redirect if not signed in
   if (isLoaded && !isSignedIn) {
     router.push("/sign-in");
@@ -108,7 +110,7 @@ export default function OnboardingPage() {
 
   const handleLoanChange = (index: number, field: keyof Loan, value: string) => {
     setFormData((prev) => {
-      const updatedLoans = [...prev.loans];
+      const updatedLoans = [...loans];
       updatedLoans[index] = {
         ...updatedLoans[index],
         [field]: value
@@ -121,9 +123,9 @@ export default function OnboardingPage() {
   };
 
   const addLoan = () => {
-    setFormData((prev) => ({
-      ...prev,
-      loans: [...prev.loans, {
+    setLoans((prevLoans) => [
+      ...prevLoans,
+      {
         amount: "",
         interestRate: "",
         duration: "",
@@ -135,16 +137,13 @@ export default function OnboardingPage() {
         collateral: "",
         assetType: "",
         assetValue: ""
-      }]
-    }));
+      }
+    ]);
   };
 
   const removeLoan = (index: number) => {
-    if (formData.loans.length <= 1) return; // Keep at least one loan form
-    setFormData((prev) => ({
-      ...prev,
-      loans: prev.loans.filter((_, i) => i !== index)
-    }));
+    if (loans.length <= 1) return; // Keep at least one loan form
+    setLoans((prevLoans) => prevLoans.filter((_, i) => i !== index));
   };
 
   const handleSelectChange = (name: string, value: string) => {
@@ -156,10 +155,10 @@ export default function OnboardingPage() {
 
   const nextStep = () => {
     console.log("Next step function called");
-    // Validate first page
+
     if (step === 1) {
       console.log("Current form data:", formData);
-      
+
       if (!formData.fullname || !formData.username || !formData.mobile_number || !formData.country) {
         console.log("Missing required fields");
         toast({
@@ -170,11 +169,11 @@ export default function OnboardingPage() {
         return;
       }
 
-      // Validate bank accounts - only check account number since bank name was removed
+
       const invalidBankAccount = formData.bankAccounts.some(
         account => !account.accountNumber
       );
-      
+
       if (invalidBankAccount) {
         console.log("Invalid bank account");
         toast({
@@ -200,35 +199,29 @@ export default function OnboardingPage() {
     setLoading(true);
 
     try {
-      // Prepare data for API
       const apiData = {
-        ...formData,
-        role: "User", // Explicitly set role
-        // Convert bank accounts and loans to the format expected by the API
-        bank_accounts: formData.bankAccounts.map(account => JSON.stringify(account)),
-        // Add loans data if any exist with non-empty values
-        loans: formData.loans.some(loan => 
-          loan.amount || loan.bankName || loan.interestRate || loan.duration) 
-          ? formData.loans.filter(loan => 
-              loan.amount || loan.bankName || loan.interestRate || loan.duration
-            ).map(loan => JSON.stringify(loan))
-          : []
+        fullname: formData.fullname,
+        username: formData.username,
+        mobile_number: formData.mobile_number,
+        country: formData.country,
+        bank_accounts: formData.bankAccounts.map(account => account.accountNumber), // now string[]
       };
 
       console.log("Submitting form data:", apiData);
 
-      // Submit data to API using axios instead of fetch
-      const response = await axios.post("/api/store_user", apiData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(`${BASE_URL}/api/store_user`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(apiData),
       });
-
-      console.log("API response:", response.data);
-
+      console.log("API response status:", response);
       if (response.status !== 200) {
-        throw new Error(response.data.error || "Something went wrong");
+        throw new Error("Something went wrong");
       }
+      const responseData = await response.json();
+      console.log("API response:", responseData);
+
+
 
       // Show success message
       toast({
@@ -238,7 +231,7 @@ export default function OnboardingPage() {
 
       // Set a cookie to mark onboarding as completed
       // This cookie will be checked by the middleware
-      document.cookie = "onboardingCompleted=true; path=/; max-age=31536000"; // 1 year expiry
+      // document.cookie = "onboardingCompleted=true; path=/; max-age=31536000";
 
       // Force redirect to dashboard immediately
       window.location.href = "/dashboard";
@@ -270,7 +263,7 @@ export default function OnboardingPage() {
             <span className="text-sm font-medium">Advice</span>
           </nav>
         </header>
-        
+
         {/* Main Content - Blurred */}
         <main className="flex-1 filter blur-md">
           <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
@@ -325,16 +318,16 @@ export default function OnboardingPage() {
               </div>
             </div>
             <CardDescription className="text-gray-700">
-              {step === 1 
-                ? 'Step 1: Personal Information (Required)' 
+              {step === 1
+                ? 'Step 1: Personal Information (Required)'
                 : 'Step 2: Loan Details (Optional)'}
             </CardDescription>
           </CardHeader>
-          
+
           <form onSubmit={step === 1 ? (e) => { e.preventDefault(); nextStep(); } : handleSubmit}>
             <CardContent className="space-y-6 bg-white/90 p-6">
               {step === 1 ? (
-                // Step 1: Personal Information
+
                 <>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
@@ -403,26 +396,26 @@ export default function OnboardingPage() {
                   <div className="space-y-4">
                     <div className="flex justify-between items-center">
                       <Label className="text-gray-800 text-lg font-medium">Bank Accounts *</Label>
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        size="sm" 
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
                         onClick={addBankAccount}
                         className="flex items-center gap-1"
                       >
                         <Plus className="h-4 w-4" /> Add Account
                       </Button>
                     </div>
-                    
+
                     {formData.bankAccounts.map((account, index) => (
                       <div key={index} className="space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
                         <div className="flex justify-between items-center">
                           <h3 className="font-medium">Account #{index + 1}</h3>
                           {formData.bankAccounts.length > 1 && (
-                            <Button 
-                              type="button" 
-                              variant="ghost" 
-                              size="sm" 
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
                               onClick={() => removeBankAccount(index)}
                               className="text-red-500 hover:text-red-700 hover:bg-red-50"
                             >
@@ -452,28 +445,28 @@ export default function OnboardingPage() {
                 <>
                   <div className="flex justify-between items-center">
                     <h2 className="text-xl font-semibold text-gray-800">Loan Information (Optional)</h2>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
                       onClick={addLoan}
                       className="flex items-center gap-1"
                     >
                       <Plus className="h-4 w-4" /> Add Loan
                     </Button>
                   </div>
-                  
+
                   <p className="text-gray-600 text-sm">You can skip this section if you don't have any loans.</p>
-                  
-                  {formData.loans.map((loan, index) => (
+
+                  {loans.map((loan, index) => (
                     <div key={index} className="space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
                       <div className="flex justify-between items-center">
                         <h3 className="font-medium">Loan #{index + 1}</h3>
-                        {formData.loans.length > 1 && (
-                          <Button 
-                            type="button" 
-                            variant="ghost" 
-                            size="sm" 
+                        {loans.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
                             onClick={() => removeLoan(index)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-50"
                           >
@@ -481,7 +474,7 @@ export default function OnboardingPage() {
                           </Button>
                         )}
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor={`loan-amount-${index}`} className="text-gray-800">Loan Amount</Label>
@@ -518,7 +511,7 @@ export default function OnboardingPage() {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor={`start-date-${index}`} className="text-gray-800">Start Date</Label>
@@ -549,7 +542,7 @@ export default function OnboardingPage() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor={`loan-type-${index}`} className="text-gray-800">Loan Type</Label>
@@ -581,7 +574,7 @@ export default function OnboardingPage() {
                           />
                         </div>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <Label htmlFor={`remarks-${index}`} className="text-gray-800">Remarks</Label>
                         <Textarea
@@ -592,11 +585,11 @@ export default function OnboardingPage() {
                           className="bg-white text-gray-800 border-gray-300 min-h-[80px]"
                         />
                       </div>
-                      
+
                       <Separator className="my-4" />
-                      
+
                       <h4 className="font-medium text-gray-800">Collateral Information</h4>
-                      
+
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div className="space-y-2 md:col-span-1">
                           <Label htmlFor={`collateral-${index}`} className="text-gray-800">Collateral</Label>
@@ -646,9 +639,9 @@ export default function OnboardingPage() {
             </CardContent>
             <CardFooter className="bg-white/90 rounded-b-lg flex justify-between sticky bottom-0 z-10 border-t border-gray-100 p-6">
               {step === 2 && (
-                <Button 
-                  type="button" 
-                  variant="outline" 
+                <Button
+                  type="button"
+                  variant="outline"
                   onClick={prevStep}
                   className="bg-white text-gray-800 border-gray-300"
                 >
@@ -656,18 +649,18 @@ export default function OnboardingPage() {
                 </Button>
               )}
               {step === 1 ? (
-                <Button 
-                  type="button" 
-                  className="ml-auto bg-primary hover:bg-primary/90" 
+                <Button
+                  type="button"
+                  className="ml-auto bg-primary hover:bg-primary/90"
                   disabled={loading}
                   onClick={nextStep}
                 >
                   Next
                 </Button>
               ) : (
-                <Button 
-                  type="submit" 
-                  className="bg-primary hover:bg-primary/90" 
+                <Button
+                  type="submit"
+                  className="bg-primary hover:bg-primary/90"
                   disabled={loading}
                 >
                   {loading ? "Submitting..." : "Complete Registration"}
