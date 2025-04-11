@@ -14,8 +14,6 @@ model User {
   email                String               @unique
   mobile_number        String
   country              String
-  age                  String
-  gender               String
   bank_accounts        String[]
   loans                String[]             @default([])
   financialProfile     FinancialProfile?
@@ -24,10 +22,6 @@ model User {
   OtherDebt            OtherDebt[]
   Loan                 Loan[]
   Emi                  Emi[]
-  clerkId              String?              @unique
-  role                 String?              @default("User")
-  isAdmin              Boolean?             @default(false)
-  signUpCompleted      Boolean?             @default(false)
 }
 
 model FinancialProfile {

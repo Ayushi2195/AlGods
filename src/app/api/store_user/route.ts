@@ -6,17 +6,11 @@ const prisma = new PrismaClient();
 
 interface UserData {
     fullname: string;
-    lastName?: string;
     username: string;
     role: string;
     mobile_number: string;
     country: string;
     bank_accounts: string[];
-    loans?: string[];
-    profile_info?: {
-        age: string;
-        gender: string;
-    };
 }
 
 export async function POST(request: NextRequest) {
@@ -25,9 +19,6 @@ export async function POST(request: NextRequest) {
         if (!userId) {
             throw new Error("Not authenticated");
         }
-
-        // console.log("User ID api:", userId);
-
 
         const clerkUser = await currentUser();
         const email = clerkUser?.emailAddresses[0]?.emailAddress;
@@ -40,13 +31,26 @@ export async function POST(request: NextRequest) {
         const { fullname, username, mobile_number, country, bank_accounts } = body;
         const role = body.role || "User"; // Set default role if not provided
 
-        if (!fullname || !username || !mobile_number || !country || !bank_accounts) {
-            return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+        if (
+            !fullname ||
+            !username ||
+            !role ||
+            !mobile_number ||
+            !country ||
+            !Array.isArray(bank_accounts)
+        ) {
+            return NextResponse.json({ error: "All fields are required and bank_accounts must be an array" }, { status: 400 });
         }
 
-        const existingUser = await prisma.user.findUnique({
-            where: { username },
+        const existingUser = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { username },
+                    { email },
+                ],
+            },
         });
+
 
         if (existingUser) {
             return NextResponse.json({ error: "Username already exists" }, { status: 400 });
@@ -63,9 +67,9 @@ export async function POST(request: NextRequest) {
                 clerkId: userId,
                 isAdmin: role !== "Student",
                 country,
+                bank_accounts,
                 signUpCompleted: true,
-                bank_accounts: bank_accounts || [], // This now contains the profile info as JSON
-                loans: body.loans || [], // Add loans data if provided
+
             },
         });
 

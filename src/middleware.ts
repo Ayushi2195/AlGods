@@ -18,29 +18,29 @@ const isOnboardingRoute = createRouteMatcher([
 export default clerkMiddleware(async (auth, req: NextRequest) => {
     try {
         const { userId } = await auth();
-        
+
         // Allow access to public routes without authentication
-        if (isPublicRoute(req) || isPublicApiRoute(req)) {
-            return NextResponse.next();
-        }
-        
-        // If user is not authenticated and trying to access protected route, redirect to sign-in
-        if (!userId) {
-            return NextResponse.redirect(new URL('/sign-in', req.url));
-        }
-        
-        // Check if user has already completed onboarding
-        // Note: We can't directly access localStorage from middleware since it runs on the server
-        // Instead, we'll check for a specific cookie that gets set after onboarding
-        const onboardingCompleted = req.cookies.get('onboardingCompleted');
-        
-        // If this is a new user and they're not already on the onboarding page, redirect them
-        if (!onboardingCompleted && !isOnboardingRoute(req)) {
-            // We'll set a cookie to remember they've been redirected to onboarding
-            const response = NextResponse.redirect(new URL('/onboarding', req.url));
-            return response;
-        }
-        
+        // if (isPublicRoute(req) || isPublicApiRoute(req)) {
+        //     return NextResponse.next();
+        // }
+
+        // // If user is not authenticated and trying to access protected route, redirect to sign-in
+        // if (!userId) {
+        //     return NextResponse.redirect(new URL('/sign-in', req.url));
+        // }
+
+        // // Check if user has already completed onboarding
+        // // Note: We can't directly access localStorage from middleware since it runs on the server
+        // // Instead, we'll check for a specific cookie that gets set after onboarding
+        // const onboardingCompleted = req.cookies.get('onboardingCompleted');
+
+        // // If this is a new user and they're not already on the onboarding page, redirect them
+        // if (!onboardingCompleted && !isOnboardingRoute(req)) {
+        //     // We'll set a cookie to remember they've been redirected to onboarding
+        //     const response = NextResponse.redirect(new URL('/onboarding', req.url));
+        //     return response;
+        // }
+
         // User is authenticated and has completed onboarding, allow access to protected routes
         return NextResponse.next();
     } catch (error) {
