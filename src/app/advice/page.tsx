@@ -2,12 +2,13 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { DollarSign, Send } from "lucide-react"
+import { DollarSign, Send, Calculator, Receipt, FileText, Home, Briefcase, GraduationCap, Heart, Leaf, PiggyBank, Shield } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
 
 import { FinanceSidebar } from "@/components/finance-sidebar"
 
@@ -83,6 +84,7 @@ export default function AdvicePage() {
             <TabsList>
               <TabsTrigger value="chat">Ask a Question</TabsTrigger>
               <TabsTrigger value="common">Common Questions</TabsTrigger>
+              <TabsTrigger value="tax-advisor">Tax Advisor</TabsTrigger>
               <TabsTrigger value="advisor">Speak to an Advisor</TabsTrigger>
             </TabsList>
             <TabsContent value="chat" className="space-y-4">
@@ -253,6 +255,200 @@ export default function AdvicePage() {
                   </CardContent>
                 </Card>
               </div>
+            </TabsContent>
+            <TabsContent value="tax-advisor" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Tax Saving Strategies</CardTitle>
+                  <CardDescription>Effective methods to legally reduce your tax burden</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Calculator className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Tax-Advantaged Accounts</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">High Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Maximize contributions to 401(k)s and IRAs to reduce taxable income</li>
+                          <li>Consider Roth options for tax-free growth and withdrawals in retirement</li>
+                          <li>Use HSAs for triple tax advantages: tax-deductible contributions, tax-free growth, and tax-free withdrawals for medical expenses</li>
+                          <li>Contribute to 529 plans for tax-free education savings</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: Up to $5,000+ annually depending on tax bracket and contribution amounts</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Home className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Homeowner Deductions</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">High Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Deduct mortgage interest on loans up to $750,000</li>
+                          <li>Property tax deductions up to $10,000 (combined with state taxes)</li>
+                          <li>Home office deduction if you're self-employed</li>
+                          <li>Energy-efficient home improvements may qualify for tax credits</li>
+                          <li>Track home improvements to reduce capital gains when selling</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: $2,000-$10,000+ depending on property value and mortgage</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Briefcase className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Business Deductions</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">High Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Deduct ordinary and necessary business expenses</li>
+                          <li>Home office, vehicle, travel, and meal deductions</li>
+                          <li>Self-employment health insurance deduction</li>
+                          <li>Qualified business income deduction (Section 199A)</li>
+                          <li>Retirement plan contributions for self-employed individuals</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: Variable based on business income and expenses, often $5,000+</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <GraduationCap className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Education Tax Benefits</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">Medium Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>American Opportunity Tax Credit: up to $2,500 per eligible student</li>
+                          <li>Lifetime Learning Credit: up to $2,000 per tax return</li>
+                          <li>Student loan interest deduction: up to $2,500</li>
+                          <li>Tax-free scholarships and grants</li>
+                          <li>Employer-provided educational assistance: up to $5,250 tax-free</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: $500-$2,500 depending on education expenses</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Heart className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Charitable Giving</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">Medium Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Deduct cash donations up to 60% of AGI</li>
+                          <li>Donate appreciated assets to avoid capital gains tax</li>
+                          <li>Qualified charitable distributions from IRAs for those 70½+</li>
+                          <li>Donor-advised funds for tax deductions now, charitable giving later</li>
+                          <li>Bunching donations in alternate years to exceed standard deduction</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: Depends on donation amount and tax bracket</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Receipt className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Tax-Loss Harvesting</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">Medium Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Offset capital gains with capital losses</li>
+                          <li>Deduct up to $3,000 of net losses against ordinary income</li>
+                          <li>Carry forward unused losses to future tax years</li>
+                          <li>Avoid wash sale rules by waiting 30+ days to repurchase</li>
+                          <li>Consider tax-efficient investment placement across accounts</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: Up to $3,000 deduction annually plus capital gains tax savings</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <FileText className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Tax Credits</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">High Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Child Tax Credit: up to $2,000 per qualifying child</li>
+                          <li>Child and Dependent Care Credit: up to $1,050 (one dependent) or $2,100 (two+)</li>
+                          <li>Earned Income Tax Credit for lower-income workers</li>
+                          <li>Saver's Credit: up to $1,000 for retirement contributions</li>
+                          <li>Premium Tax Credit for health insurance purchased through marketplace</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: Credits directly reduce tax bill, often $1,000-$5,000+</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Leaf className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Green Tax Incentives</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">Moderate Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Electric vehicle tax credits: up to $7,500</li>
+                          <li>Residential energy credits for solar panels, heat pumps, etc.</li>
+                          <li>Energy-efficient home improvement credits</li>
+                          <li>Residential clean energy credit: up to 30% of cost</li>
+                          <li>Energy-efficient commercial building deduction</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: $500-$7,500 depending on qualifying purchases</p>
+                      </CardContent>
+                    </Card>
+                    
+                    <Card className="border-0 bg-gray-800 text-white shadow-md">
+                      <CardHeader className="bg-gray-900 rounded-t-lg border-b border-gray-700">
+                        <div className="flex items-center gap-2">
+                          <PiggyBank className="h-5 w-5 text-blue-400" />
+                          <CardTitle className="text-lg text-white">Retirement Tax Planning</CardTitle>
+                        </div>
+                        <Badge className="bg-blue-900 text-blue-100 hover:bg-blue-800">High Impact</Badge>
+                      </CardHeader>
+                      <CardContent className="pt-4">
+                        <ul className="space-y-2 list-disc pl-5 text-sm text-gray-200">
+                          <li>Strategic Roth conversions during low-income years</li>
+                          <li>Qualified charitable distributions from IRAs</li>
+                          <li>Net unrealized appreciation for employer stock</li>
+                          <li>Social Security taxation planning</li>
+                          <li>Required minimum distribution planning</li>
+                        </ul>
+                        <p className="text-xs text-gray-300 mt-3">Potential savings: Significant long-term tax reduction, often $10,000+ over retirement</p>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CardContent>
+                <CardFooter className="flex justify-between">
+                  <p className="text-sm text-muted-foreground">Note: Tax laws change frequently. Consult a tax professional for personalized advice.</p>
+                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">Download Tax Guide</Button>
+                </CardFooter>
+              </Card>
             </TabsContent>
             <TabsContent value="advisor" className="space-y-4">
               <Card>
