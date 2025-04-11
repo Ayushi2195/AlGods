@@ -73,7 +73,7 @@ export default function Home() {
               </div>
               <div className="flex justify-center lg:justify-end">
                 <img
-                  src="/placeholder.svg?height=550&width=450"
+                  src="Money stress-pana.png"
                   alt="Financial Dashboard Preview"
                   className="aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
                   width={550}
