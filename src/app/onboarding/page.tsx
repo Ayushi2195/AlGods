@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -18,7 +19,6 @@ import { Separator } from "@/components/ui/separator";
 
 interface BankAccount {
   accountNumber: string;
-  bankName: string;
 }
 
 interface Loan {
@@ -46,7 +46,7 @@ export default function OnboardingPage() {
     username: "",
     mobile_number: "",
     country: "",
-    bankAccounts: [{ accountNumber: "", bankName: "" }] as BankAccount[],
+    bankAccounts: [{ accountNumber: "" }] as BankAccount[],
     loans: [{
       amount: "",
       interestRate: "",
@@ -94,7 +94,7 @@ export default function OnboardingPage() {
   const addBankAccount = () => {
     setFormData((prev) => ({
       ...prev,
-      bankAccounts: [...prev.bankAccounts, { accountNumber: "", bankName: "" }]
+      bankAccounts: [...prev.bankAccounts, { accountNumber: "" }]
     }));
   };
 
@@ -155,9 +155,13 @@ export default function OnboardingPage() {
   };
 
   const nextStep = () => {
+    console.log("Next step function called");
     // Validate first page
     if (step === 1) {
+      console.log("Current form data:", formData);
+      
       if (!formData.fullname || !formData.username || !formData.mobile_number || !formData.country) {
+        console.log("Missing required fields");
         toast({
           title: "Error",
           description: "Please fill in all required fields",
@@ -166,12 +170,13 @@ export default function OnboardingPage() {
         return;
       }
 
-      // Validate bank accounts
+      // Validate bank accounts - only check account number since bank name was removed
       const invalidBankAccount = formData.bankAccounts.some(
-        account => !account.accountNumber || !account.bankName
+        account => !account.accountNumber
       );
       
       if (invalidBankAccount) {
+        console.log("Invalid bank account");
         toast({
           title: "Error",
           description: "Please fill in all bank account details",
@@ -180,6 +185,7 @@ export default function OnboardingPage() {
         return;
       }
 
+      console.log("Moving to step 2");
       setStep(2);
     }
   };
@@ -190,29 +196,38 @@ export default function OnboardingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Form submission started");
     setLoading(true);
 
     try {
       // Prepare data for API
       const apiData = {
         ...formData,
+        role: "User", // Explicitly set role
         // Convert bank accounts and loans to the format expected by the API
-        bank_accounts: formData.bankAccounts.map(account => JSON.stringify(account))
+        bank_accounts: formData.bankAccounts.map(account => JSON.stringify(account)),
+        // Add loans data if any exist with non-empty values
+        loans: formData.loans.some(loan => 
+          loan.amount || loan.bankName || loan.interestRate || loan.duration) 
+          ? formData.loans.filter(loan => 
+              loan.amount || loan.bankName || loan.interestRate || loan.duration
+            ).map(loan => JSON.stringify(loan))
+          : []
       };
 
-      // Submit data to API
-      const response = await fetch("/api/store_user", {
-        method: "POST",
+      console.log("Submitting form data:", apiData);
+
+      // Submit data to API using axios instead of fetch
+      const response = await axios.post("/api/store_user", apiData, {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(apiData),
       });
 
-      const data = await response.json();
+      console.log("API response:", response.data);
 
-      if (!response.ok) {
-        throw new Error(data.error || "Something went wrong");
+      if (response.status !== 200) {
+        throw new Error(response.data.error || "Something went wrong");
       }
 
       // Show success message
@@ -225,14 +240,13 @@ export default function OnboardingPage() {
       // This cookie will be checked by the middleware
       document.cookie = "onboardingCompleted=true; path=/; max-age=31536000"; // 1 year expiry
 
-      // Redirect to dashboard after successful submission
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 1500);
+      // Force redirect to dashboard immediately
+      window.location.href = "/dashboard";
     } catch (error: any) {
+      console.error("Form submission error:", error);
       toast({
         title: "Error",
-        description: error.message || "Something went wrong",
+        description: error.response?.data?.error || error.message || "Something went wrong",
         variant: "destructive",
       });
     } finally {
@@ -641,14 +655,24 @@ export default function OnboardingPage() {
                   Back
                 </Button>
               )}
-              <Button 
-                type={step === 1 ? "button" : "submit"} 
-                className={`${step === 1 ? 'ml-auto' : ''} bg-primary hover:bg-primary/90`} 
-                disabled={loading}
-                onClick={step === 1 ? nextStep : undefined}
-              >
-                {step === 1 ? "Next" : loading ? "Submitting..." : "Complete Registration"}
-              </Button>
+              {step === 1 ? (
+                <Button 
+                  type="button" 
+                  className="ml-auto bg-primary hover:bg-primary/90" 
+                  disabled={loading}
+                  onClick={nextStep}
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button 
+                  type="submit" 
+                  className="bg-primary hover:bg-primary/90" 
+                  disabled={loading}
+                >
+                  {loading ? "Submitting..." : "Complete Registration"}
+                </Button>
+              )}
             </CardFooter>
           </form>
         </Card>
